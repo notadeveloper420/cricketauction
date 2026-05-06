@@ -58,7 +58,7 @@ export default function HostSetupScreen({ goTo }) {
         currentBid: players[0]?.base ?? 0,
         currentLeader: null,
         phase: 'lobby',
-        log: [`${name.trim()} created the room`],
+        log: [{ type:'system', text:`${name.trim()} created the room`, t: Date.now() }],
         timerEnd: null,
         soldResult: null,
         timerHandled: false,

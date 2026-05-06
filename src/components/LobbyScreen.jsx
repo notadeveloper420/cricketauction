@@ -37,7 +37,7 @@ export default function LobbyScreen({ session, goTo }) {
       const prev = r.teams.find(t => t.human === session.myName)
       if (prev) prev.human = null
       target.human = session.myName
-      r.log.push(`${session.myName} picked ${teamName}`)
+      r.log.push({ type:'system', text:`${session.myName} picked ${teamName}`, t: Date.now() })
       await setRoom(session.roomCode, r)
       goTo('lobby', { myTeam: teamName })
     } catch (e) { console.error(e) }
@@ -50,7 +50,7 @@ export default function LobbyScreen({ session, goTo }) {
     try {
       const r = await getRoom(session.roomCode)
       const prev = r.teams.find(t => t.human === session.myName)
-      if (prev) { prev.human = null; r.log.push(`${session.myName} released ${prev.name}`); await setRoom(session.roomCode, r); goTo('lobby', { myTeam: null }) }
+      if (prev) { prev.human = null; r.log.push({ type:'system', text:`${session.myName} released ${prev.name}`, t: Date.now() }); await setRoom(session.roomCode, r); goTo('lobby', { myTeam: null }) }
     } catch (e) {}
     setClaiming(false)
   }
@@ -112,7 +112,7 @@ export default function LobbyScreen({ session, goTo }) {
           squad: retained.map(p => ({ ...p, price: p.salary, retained: true })),
         }
       })
-      r.log.push(`${session.myName} updated retentions`)
+      r.log.push({ type:'system', text:`${session.myName} updated retentions`, t: Date.now() })
       await setRoom(session.roomCode, r)
       setRoomState(r)
     } catch (e) { console.error(e) }
