@@ -22,7 +22,7 @@ export default function LobbyScreen({ session, goTo }) {
     const unsub = subscribeToRoom(session.roomCode, r => {
       setRoomState(r)
       if (r.retentions && !session.isHost) setRetentions(r.retentions)
-      if (r.phase === 'bidding') goTo('auction')
+      if (r.phase === 'bidding') goTo('auction', {})
     })
     return unsub
   }, [session.roomCode])
