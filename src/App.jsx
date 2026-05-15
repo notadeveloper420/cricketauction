@@ -8,7 +8,6 @@ import AuctionScreen from "./components/AuctionScreen.jsx";
 import ResultsScreen from "./components/ResultsScreen.jsx";
 
 export default function App() {
-  <Analytics />;
   const [screen, setScreen] = useState("home");
   const [session, setSession] = useState(null);
   // session: { roomCode, myName, myTeam, isHost, league }
