@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 import HomeScreen from "./components/HomeScreen.jsx";
 import HostSetupScreen from "./components/HostSetupScreen.jsx";
 import JoinScreen from "./components/JoinScreen.jsx";
