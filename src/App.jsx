@@ -62,6 +62,7 @@ export default function App() {
           <ResultsScreen session={session} goTo={goTo} />
         )}
       </div>
+      <Analytics />
     </div>
   );
 }
