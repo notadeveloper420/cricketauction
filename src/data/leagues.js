@@ -1326,7 +1326,7 @@ export const LEAGUES = {
         stats: "Pretoria Capitals · England stroke-maker",
       },
     ],
-  },
+  },*/
 };
 
 export function fmtMoney(amount, leagueKey) {
@@ -1408,6 +1408,3 @@ export function calcHundredDeduction(playerCount) {
   if (playerCount === 1) return 350000;
   return 0;
 }
-
-*/
-};
