@@ -294,7 +294,7 @@ export const HUNDRED_RETENTIONS = {
   ],
 };
 
-// Pool definitions - auto-generated from price + domestic/overseas + role
+// Pool definitions — manually defined by tier, role type, and price band
 // Each player in the auction pool belongs to exactly one pool
 // Pools are auctioned in order; within each pool players go one at a time in shuffled order
 
@@ -392,25 +392,25 @@ export const HUNDRED_POOLS = [
     color: "#a5d6ff",
     filter: (p) => p.ecbGroup === "Tier 3 Spin Bowlers",
   },
-  // Tier 4 — County depth & fringe internationals (£31K longlist)
+  // Tier 4 — County depth & fringe internationals (£31K) — ~6 players each
   {
     id: "tier4_bat",
     label: "Tier 4 — Batters",
-    desc: "County depth batters £31K",
+    desc: "County batters & WKs (senior) £31K",
     color: "#8b949e",
     filter: (p) => p.ecbGroup === "Tier 4 Batters",
   },
   {
     id: "tier4_fast",
     label: "Tier 4 — Fast",
-    desc: "County depth pace bowlers £31K",
+    desc: "County pace bowlers (senior) £31K",
     color: "#8b949e",
     filter: (p) => p.ecbGroup === "Tier 4 Fast Bowlers",
   },
   {
     id: "tier4_ar",
     label: "Tier 4 — All-rounders",
-    desc: "County depth all-rounders £31K",
+    desc: "County all-rounders (senior) £31K",
     color: "#8b949e",
     filter: (p) => p.ecbGroup === "Tier 4 All-rounders",
   },
@@ -420,6 +420,57 @@ export const HUNDRED_POOLS = [
     desc: "County depth spinners £31K",
     color: "#8b949e",
     filter: (p) => p.ecbGroup === "Tier 4 Spin Bowlers",
+  },
+  // Tier 5 — County emerging & Lions regulars (£31K) — ~6 players each
+  {
+    id: "tier5_bat",
+    label: "Tier 5 — Batters",
+    desc: "County batters & WKs (emerging) £31K",
+    color: "#8b949e",
+    filter: (p) => p.ecbGroup === "Tier 5 Batters",
+  },
+  {
+    id: "tier5_fast",
+    label: "Tier 5 — Fast",
+    desc: "County pace bowlers (emerging) £31K",
+    color: "#8b949e",
+    filter: (p) => p.ecbGroup === "Tier 5 Fast Bowlers",
+  },
+  {
+    id: "tier5_ar",
+    label: "Tier 5 — All-rounders",
+    desc: "County all-rounders (emerging) £31K",
+    color: "#8b949e",
+    filter: (p) => p.ecbGroup === "Tier 5 All-rounders",
+  },
+  // Tier 6 — Development pathway: England Lions, U19 WC & deepest county (£31K)
+  {
+    id: "tier6_bat",
+    label: "Tier 6 — Batters",
+    desc: "Dev pathway batters £31K",
+    color: "#6e7681",
+    filter: (p) => p.ecbGroup === "Tier 6 Batters",
+  },
+  {
+    id: "tier6_fast",
+    label: "Tier 6 — Fast",
+    desc: "Dev pathway pace bowlers £31K",
+    color: "#6e7681",
+    filter: (p) => p.ecbGroup === "Tier 6 Fast Bowlers",
+  },
+  {
+    id: "tier6_ar",
+    label: "Tier 6 — All-rounders",
+    desc: "Dev pathway all-rounders £31K",
+    color: "#6e7681",
+    filter: (p) => p.ecbGroup === "Tier 6 All-rounders",
+  },
+  {
+    id: "tier6_spin",
+    label: "Tier 6 — Spin",
+    desc: "Dev pathway spinners £31K",
+    color: "#6e7681",
+    filter: (p) => p.ecbGroup === "Tier 6 Spin Bowlers",
   },
 ];
 
@@ -439,11 +490,12 @@ export function hundredIncrementLabel(currentBid) {
 
 // Full curated player list from 2026 registration PDF
 // Roles inferred from known positions; omits retained players (handled separately)
-// £31K domestic list is curated to ~60 recognisable names to keep pool manageable
+// Covers all ECB Tiers 1–5; 154 players across domestic and overseas
 export const HUNDRED_PLAYERS = [
   // Source: ECB official Men's Auction Sets and Longlist 2026
-  // Tier 3 = experienced internationals & proven Blast regulars
-  // Tier 4 = county depth & fringe internationals
+  // ── MARQUEE PLAYERS ───────────────────────────────────────────────────────
+  // Tier 1 & 2 = official ECB auction sets | Tier 3 = experienced intls & Blast regulars (£50–75K)
+  // Tier 4 = county depth & fringe internationals (£31K) | Tier 5 = development pathway players (£31K)
   {
     name: "Jonny Bairstow",
     role: "WK-Batter",
@@ -524,6 +576,7 @@ export const HUNDRED_PLAYERS = [
     base: 75000,
     ecbGroup: "Marquee Players",
   },
+  // ── TIER 1 BATTERS ────────────────────────────────────────────────────────
   {
     name: "Finn Allen",
     role: "WK-Batter",
@@ -564,6 +617,7 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 1 Batters",
   },
+  // ── TIER 1 FAST BOWLERS ───────────────────────────────────────────────────
   {
     name: "Shaheen Shah Afridi",
     role: "Bowler",
@@ -604,6 +658,7 @@ export const HUNDRED_PLAYERS = [
     base: 50000,
     ecbGroup: "Tier 1 Fast Bowlers",
   },
+  // ── TIER 1 ALL-ROUNDERS ───────────────────────────────────────────────────
   {
     name: "Tom Curran",
     role: "All-rounder",
@@ -644,6 +699,7 @@ export const HUNDRED_PLAYERS = [
     base: 50000,
     ecbGroup: "Tier 1 All-rounders",
   },
+  // ── TIER 1 SPIN BOWLERS ───────────────────────────────────────────────────
   {
     name: "Akeal Hosein",
     role: "Bowler",
@@ -684,6 +740,7 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 1 Spin Bowlers",
   },
+  // ── TIER 2 BATTERS ────────────────────────────────────────────────────────
   {
     name: "Tom Kohler-Cadmore",
     role: "WK-Batter",
@@ -724,6 +781,7 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 2 Batters",
   },
+  // ── TIER 2 FAST BOWLERS ───────────────────────────────────────────────────
   {
     name: "Trent Boult",
     role: "Bowler",
@@ -764,6 +822,7 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 2 Fast Bowlers",
   },
+  // ── TIER 2 ALL-ROUNDERS ───────────────────────────────────────────────────
   {
     name: "Saim Ayub",
     role: "All-rounder",
@@ -804,6 +863,7 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 2 All-rounders",
   },
+  // ── TIER 2 SPIN BOWLERS ───────────────────────────────────────────────────
   {
     name: "Abrar Ahmed",
     role: "Bowler",
@@ -844,6 +904,7 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 2 Spin Bowlers",
   },
+  // ── TIER 3 BATTERS ────────────────────────────────────────────────────────
   {
     name: "Faf du Plessis",
     role: "Batter",
@@ -908,6 +969,7 @@ export const HUNDRED_PLAYERS = [
     base: 50000,
     ecbGroup: "Tier 3 Batters",
   },
+  // ── TIER 3 FAST BOWLERS ───────────────────────────────────────────────────
   {
     name: "Lockie Ferguson",
     role: "Bowler",
@@ -972,6 +1034,7 @@ export const HUNDRED_PLAYERS = [
     base: 75000,
     ecbGroup: "Tier 3 Fast Bowlers",
   },
+  // ── TIER 3 ALL-ROUNDERS ───────────────────────────────────────────────────
   {
     name: "Wanindu Hasaranga",
     role: "All-rounder",
@@ -1036,21 +1099,14 @@ export const HUNDRED_PLAYERS = [
     base: 50000,
     ecbGroup: "Tier 3 All-rounders",
   },
-  {
-    name: "Mujeeb Ur Rahman",
-    role: "Bowler",
-    nat: "Afghanistan",
-    os: true,
-    base: 100000,
-    ecbGroup: "Tier 3 Spin Bowlers",
-  },
+  // ── TIER 3 FAST BOWLERS (continued) ──────────────────────────────────────
   {
     name: "Mustafizur Rahman",
     role: "Bowler",
     nat: "Bangladesh",
     os: true,
     base: 100000,
-    ecbGroup: "Tier 3 Spin Bowlers",
+    ecbGroup: "Tier 3 Fast Bowlers",
   },
   {
     name: "Muhammad Amir",
@@ -1058,7 +1114,7 @@ export const HUNDRED_PLAYERS = [
     nat: "Pakistan",
     os: true,
     base: 75000,
-    ecbGroup: "Tier 3 Spin Bowlers",
+    ecbGroup: "Tier 3 Fast Bowlers",
   },
   {
     name: "Zaman Khan",
@@ -1066,6 +1122,16 @@ export const HUNDRED_PLAYERS = [
     nat: "Pakistan",
     os: true,
     base: 75000,
+    ecbGroup: "Tier 3 Fast Bowlers",
+  },
+
+  // ── TIER 3 SPIN BOWLERS ───────────────────────────────────────────────────
+  {
+    name: "Mujeeb Ur Rahman",
+    role: "Bowler",
+    nat: "Afghanistan",
+    os: true,
+    base: 100000,
     ecbGroup: "Tier 3 Spin Bowlers",
   },
   {
@@ -1100,6 +1166,8 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 3 Spin Bowlers",
   },
+  // Tier 4 Batters — senior county (Sam Billings, Pope, Roy, Jennings, Clark, Flintoff)
+  // Tier 5 Batters — emerging county (Haynes, McKinney, Tribe, Pepper, Donald, Rew)
   {
     name: "Sam Billings",
     role: "WK-Batter",
@@ -1146,7 +1214,7 @@ export const HUNDRED_PLAYERS = [
     nat: "England",
     os: false,
     base: 31000,
-    ecbGroup: "Tier 4 Batters",
+    ecbGroup: "Tier 5 Batters",
   },
   {
     name: "Graham Clark",
@@ -1156,14 +1224,9 @@ export const HUNDRED_PLAYERS = [
     base: 31000,
     ecbGroup: "Tier 4 Batters",
   },
-  {
-    name: "Jimmy Neesham",
-    role: "All-rounder",
-    nat: "New Zealand",
-    os: true,
-    base: 31000,
-    ecbGroup: "Tier 4 Batters",
-  },
+
+  // Tier 4 Fast Bowlers — senior county (Topley, Pennington, Cook, Gleeson, Stanley, Currie)
+  // Tier 5 Fast Bowlers — emerging & intl (Aspinwall, Minto, E.Jack, Muzarabani, Baartman, Javed)
   {
     name: "Reece Topley",
     role: "Bowler",
@@ -1189,20 +1252,12 @@ export const HUNDRED_PLAYERS = [
     ecbGroup: "Tier 4 Fast Bowlers",
   },
   {
-    name: "Ben Raine",
-    role: "Bowler",
-    nat: "England",
-    os: false,
-    base: 31000,
-    ecbGroup: "Tier 4 Fast Bowlers",
-  },
-  {
     name: "Blessing Muzarabani",
     role: "Bowler",
     nat: "Zimbabwe",
     os: true,
     base: 31000,
-    ecbGroup: "Tier 4 Fast Bowlers",
+    ecbGroup: "Tier 5 Fast Bowlers",
   },
   {
     name: "Ottneil Baartman",
@@ -1210,7 +1265,7 @@ export const HUNDRED_PLAYERS = [
     nat: "South Africa",
     os: true,
     base: 31000,
-    ecbGroup: "Tier 4 Fast Bowlers",
+    ecbGroup: "Tier 5 Fast Bowlers",
   },
   {
     name: "Akif Javed",
@@ -1218,7 +1273,34 @@ export const HUNDRED_PLAYERS = [
     nat: "Pakistan",
     os: true,
     base: 31000,
+    ecbGroup: "Tier 5 Fast Bowlers",
+  },
+  {
+    name: "Richard Gleeson",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
     ecbGroup: "Tier 4 Fast Bowlers",
+  },
+
+  // Tier 4 All-rounders — senior county (Overton, Higgins, Thompson, Lammonby, Garton, Walter)
+  // Tier 5 All-rounders — emerging & intl (Linde, Harrison, Benkenstein, Albert, Revis, Falconer)
+  {
+    name: "Jimmy Neesham",
+    role: "All-rounder",
+    nat: "New Zealand",
+    os: true,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+  },
+  {
+    name: "Ben Raine",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
   },
   {
     name: "Craig Overton",
@@ -1269,21 +1351,14 @@ export const HUNDRED_PLAYERS = [
     ecbGroup: "Tier 4 All-rounders",
   },
   {
-    name: "Richard Gleeson",
-    role: "All-rounder",
-    nat: "England",
-    os: false,
-    base: 31000,
-    ecbGroup: "Tier 4 All-rounders",
-  },
-  {
     name: "George Linde",
     role: "All-rounder",
     nat: "South Africa",
     os: true,
     base: 31000,
-    ecbGroup: "Tier 4 All-rounders",
+    ecbGroup: "Tier 5 All-rounders",
   },
+  // Tier 4 Spin Bowlers — 6 players (C.Parkinson, M.Parkinson, Briggs, Trevaskis, Hollman, Qais Ahmad)
   {
     name: "Callum Parkinson",
     role: "Bowler",
@@ -1338,8 +1413,387 @@ export const HUNDRED_PLAYERS = [
     nat: "Nepal",
     os: true,
     base: 31000,
-    ecbGroup: "Tier 4 Spin Bowlers",
+    ecbGroup: "Tier 6 Spin Bowlers",
   },
+
+  // ── TIER 4 DOMESTIC ADDITIONS ──────────────────────────────────────────────
+  // Players present in the ECB official Longlist PDF but omitted from the
+  // original JS. All domestic (England), all £31K reserve price.
+
+  // Tier 4 Batters — Longlist PDF entries
+  {
+    name: "Ben McKinney",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Batters",
+  },
+  {
+    name: "Asa Tribe",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Batters",
+  },
+  {
+    name: "Tazeem Ali",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+  },
+  {
+    name: "Tom Alsop",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+  },
+  {
+    name: "Michael Pepper",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Batters",
+  },
+  {
+    name: "Aneurin Donald",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Batters",
+  },
+  {
+    name: "James Rew",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Batters",
+  },
+
+  // Tier 5 Batters — Longlist PDF entries
+  {
+    name: "Joe Moores",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+  },
+
+  // Tier 4 & 5 Fast Bowlers — Longlist PDF entries
+  {
+    name: "Mitchell Stanley",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 4 Fast Bowlers",
+  },
+  {
+    name: "Scott Currie",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 4 Fast Bowlers",
+  },
+  {
+    name: "Tom Helm",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+  },
+  {
+    name: "George Scrimshaw",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+  },
+  {
+    name: "Tom Aspinwall",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Fast Bowlers",
+  },
+  {
+    name: "James Minto",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Fast Bowlers",
+  },
+  {
+    name: "Edward Jack",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 Fast Bowlers",
+  },
+  {
+    name: "Ben Mayes",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+  },
+  {
+    name: "Alex Green",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+  },
+
+  // Tier 5 All-rounders — Longlist PDF entries
+  {
+    name: "Calvin Harrison",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 All-rounders",
+  },
+  {
+    name: "Luc Benkenstein",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 All-rounders",
+  },
+  {
+    name: "Ralphie Albert",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 All-rounders",
+  },
+  {
+    name: "Matthew Revis",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 All-rounders",
+  },
+  {
+    name: "Caleb Falconer",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 5 All-rounders",
+  },
+  {
+    name: "Kasey Aldridge",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+  },
+  {
+    name: "Jack Carson",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+  },
+
+  // Tier 4 Spin Bowlers — Longlist PDF entries (6 players; remainder moved to Tier 5)
+  // (Jafer Chohan already appears in the Tier 1 Spin pool above — not duplicated here)
+  {
+    name: "Farhan Ahmed",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Spin Bowlers",
+  },
+  {
+    name: "Liam Patterson-White",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Spin Bowlers",
+  },
+
+  // ── TIER 5 — DEVELOPMENT PLAYERS ──────────────────────────────────────────
+  // England U19 WC 2026 squad members, England U19 WC 2024 squad members, and
+  // other ECB-pathway domestic players not yet on the main longlist.
+  // Reserve price £31K. Primarily here to ensure squads can reach 15-player minimum.
+
+  // Tier 6 Batters
+  {
+    name: "Will Bennison",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2026",
+  },
+  {
+    name: "Luke Hands",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2026",
+  },
+  {
+    name: "Sebastian Morgan",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2024 & 2026",
+  },
+  {
+    name: "Jaydn Denly",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2024",
+  },
+  {
+    name: "Haydon Mustard",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2024",
+  },
+  {
+    name: "Manny Lumsden",
+    role: "Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2026",
+  },
+  {
+    name: "Thomas Rew",
+    role: "WK-Batter",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Batters",
+    note: "Eng U19 WC 2026 captain",
+  },
+
+  // Tier 6 Fast Bowlers
+  {
+    name: "Ben Dawkins",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+    note: "Eng U19 WC 2026",
+  },
+  {
+    name: "Alex French",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+    note: "Eng U19 WC 2026",
+  },
+  {
+    name: "Noah Thain",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+    note: "Eng U19 WC 2024",
+  },
+  {
+    name: "Theo Wylie",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+    note: "Eng U19 WC 2024",
+  },
+  {
+    name: "Charlie Barnard",
+    role: "Bowler",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 Fast Bowlers",
+    note: "Eng U19 WC 2024",
+  },
+
+  // Tier 6 All-rounders
+  {
+    name: "Ali Farooq",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+    note: "Eng U19 WC 2026",
+  },
+  {
+    name: "Charlie Allison",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+    note: "Eng U19 WC 2024",
+  },
+  {
+    name: "Hamza Shaikh",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+    note: "Eng U19 WC 2024",
+  },
+  {
+    name: "Jack Carney",
+    role: "All-rounder",
+    nat: "England",
+    os: false,
+    base: 31000,
+    ecbGroup: "Tier 6 All-rounders",
+    note: "Eng U19 WC 2024",
+  },
+
 ];
 
 // Build pool-categorised auction list from player data
@@ -1433,6 +1887,16 @@ export function classifyReleasedPlayer(player) {
     "Mason Crane",
     "Tom Hartley",
   ];
+  // Spinners among retained players who could be released
+  const spinnerNames = [
+    "Rehan Ahmed",
+    "Adam Zampa",
+    "Rashid Khan",
+    "Noor Ahmad",
+    "Adil Rashid",
+    "Mitchell Santner",
+    "Liam Dawson",
+  ];
   const tier2Bat = [
     "Tom Kohler-Cadmore",
     "Joe Clarke",
@@ -1473,6 +1937,9 @@ export function classifyReleasedPlayer(player) {
   } else if (player.role === "WK-Batter" || player.role === "Batter") {
     base = player.os ? 50000 : 31000;
     ecbGroup = player.os ? "Tier 3 Batters" : "Tier 4 Batters";
+  } else if (spinnerNames.includes(player.name)) {
+    base = player.os ? 50000 : 31000;
+    ecbGroup = player.os ? "Tier 3 Spin Bowlers" : "Tier 4 Spin Bowlers";
   } else if (player.role === "Bowler") {
     base = player.os ? 50000 : 31000;
     ecbGroup = player.os ? "Tier 3 Fast Bowlers" : "Tier 4 Fast Bowlers";

@@ -15,7 +15,7 @@ export default function HomeScreen({ goTo }) {
           <span style={{ color: "var(--green)" }}>dream XI.</span>
         </h1>
         <p style={{ color: "var(--text-muted)", fontSize: 16 }}>
-          Real-time multiplayer auction simulator — IPL, The Hundred, SA20.
+          Real-time multiplayer auction simulator — IPL, The Hundred
         </p>
       </div>
 

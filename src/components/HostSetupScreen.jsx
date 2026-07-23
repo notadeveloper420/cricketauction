@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { LEAGUES, genCode, calcHundredDeduction } from '../data/leagues.js'
 import { HUNDRED_RETENTIONS, HUNDRED_PLAYERS, buildHundredAuctionPools } from '../data/hundred.js'
+import { IPL_PLAYERS, buildIPLAuctionSets } from '../data/ipl.js'
 import { setRoom } from '../lib/rooms.js'
 
 export default function HostSetupScreen({ goTo }) {
@@ -19,7 +20,7 @@ export default function HostSetupScreen({ goTo }) {
       const code = genCode()
       const l = LEAGUES[league]
 
-      let players, retentions = null, auctionPools = null
+      let players, retentions = null, auctionPools = null, auctionSets = null
 
       if (league === 'hundred') {
         // Deep-clone retentions so they can be edited in the lobby
@@ -29,6 +30,13 @@ export default function HostSetupScreen({ goTo }) {
         // Flatten pools into players array — pool info preserved on each player
         players = auctionPools.flatMap(pool =>
           pool.players.map(p => ({ ...p, poolId: pool.id, poolLabel: pool.label }))
+        )
+      } else if (league === 'ipl') {
+        // Build set-categorised player list from full IPL_PLAYERS (excludes none by default)
+        auctionSets = buildIPLAuctionSets()
+        // Flatten sets into players array — set info preserved on each player
+        players = auctionSets.flatMap(set =>
+          set.players.map(p => ({ ...p, setId: set.id, setLabel: set.label }))
         )
       } else {
         players = [...l.players].sort(() => Math.random() - 0.5)
@@ -53,6 +61,7 @@ export default function HostSetupScreen({ goTo }) {
         players,
         retentions, // stored so lobby can edit
         auctionPools: auctionPools ? auctionPools.map(p => ({ id: p.id, label: p.label, desc: p.desc, color: p.color, playerCount: p.players.length })) : null,
+        auctionSets: auctionSets ? auctionSets.map(s => ({ id: s.id, label: s.label, desc: s.desc, color: s.color, playerCount: s.players.length })) : null,
         currentPoolIdx: 0,
         currentIdx: 0,
         currentBid: players[0]?.base ?? 0,
@@ -104,6 +113,8 @@ export default function HostSetupScreen({ goTo }) {
                 {l.teams.length} teams · {
                   key === 'hundred'
                     ? `${HUNDRED_PLAYERS.length} auction players + ${Object.values(HUNDRED_RETENTIONS).flat().length} retained`
+                    : key === 'ipl'
+                    ? `${IPL_PLAYERS.length} players`
                     : `${l.players.length} players`
                 }
               </div>

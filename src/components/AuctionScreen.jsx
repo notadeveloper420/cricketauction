@@ -6,6 +6,7 @@ import {
   getIncrement,
   hundredIncrement,
   hundredIncrementLabel,
+  iplIncrementLabel,
 } from "../data/leagues.js";
 import SquadViewer from "./SquadViewer.jsx";
 import { getRoom, setRoom, subscribeToRoom } from "../lib/rooms.js";
@@ -110,22 +111,23 @@ function SoldCountdown({ onAdvance }) {
 
 // ── Pool progress banner (Hundred only) ──────────────────────────────────────
 function PoolProgress({ room }) {
-  if (!room.auctionPools) return null;
-  const pools = room.auctionPools;
+  const isIPL = room.league === "ipl";
+  const pools = isIPL ? room.auctionSets : room.auctionPools;
+  if (!pools) return null;
+  const idKey = isIPL ? "setId" : "poolId";
   const player = room.players[room.currentIdx];
-  const currentPoolId = player?.poolId;
+  const currentPoolId = player?.[idKey];
   const currentIdx = pools.findIndex((p) => p.id === currentPoolId);
   const currentPool = pools[currentIdx];
-  // Find next pool that still has unplayed players
   const nextPool = pools.slice(currentIdx + 1).find((p) => {
     const remaining = room.players
       .slice(room.currentIdx + 1)
-      .filter((pl) => pl.poolId === p.id);
+      .filter((pl) => pl[idKey] === p.id);
     return remaining.length > 0;
   });
-  const completedCount = pools.filter((p, i) => {
-    const poolPlayers = room.players.filter((pl) => pl.poolId === p.id);
-    const poolStart = room.players.findIndex((pl) => pl.poolId === p.id);
+  const completedCount = pools.filter((p) => {
+    const poolPlayers = room.players.filter((pl) => pl[idKey] === p.id);
+    const poolStart = room.players.findIndex((pl) => pl[idKey] === p.id);
     return (
       poolStart >= 0 && room.currentIdx > poolStart + poolPlayers.length - 1
     );
@@ -207,7 +209,7 @@ function PoolProgress({ room }) {
             fontFamily: "Barlow Condensed",
           }}
         >
-          {currentIdx + 1}/{pools.length} pools
+          {currentIdx + 1}/{pools.length} {isIPL ? "sets" : "pools"}
         </span>
       )}
     </div>
@@ -346,7 +348,7 @@ function SoldTransitionPanel({
                   Overseas
                 </span>
               )}
-              {nextPlayer.poolLabel && (
+              {(nextPlayer.poolLabel || nextPlayer.setLabel) && (
                 <span
                   className="badge"
                   style={{
@@ -356,7 +358,7 @@ function SoldTransitionPanel({
                     border: "1px solid rgba(88,166,255,0.25)",
                   }}
                 >
-                  {nextPlayer.poolLabel}
+                  {nextPlayer.poolLabel || nextPlayer.setLabel}
                 </span>
               )}
             </div>
@@ -441,12 +443,60 @@ function SoldTransitionPanel({
 // ── Pool list viewer ──────────────────────────────────────────────────────────
 function PoolListViewer({ players, currentIdx, league }) {
   const isHundred = league === "hundred";
+  const isIPL = league === "ipl";
   const [openPool, setOpenPool] = useState(null);
 
   if (!players || players.length === 0) return null;
 
+  if (isIPL) {
+    const setOrder = [];
+    const bySet = {};
+    players.forEach((p, i) => {
+      const key = p.setLabel || "Other";
+      if (!bySet[key]) { bySet[key] = []; setOrder.push(key); }
+      bySet[key].push({ ...p, idx: i });
+    });
+    return (
+      <div>
+        {setOrder.map((setName) => {
+          const ps = bySet[setName];
+          if (!ps.length) return null;
+          const isOpen = openPool === setName;
+          const doneCount = ps.filter((p) => p.idx < currentIdx).length;
+          return (
+            <div key={setName} style={{ marginBottom: 8, border: "1px solid var(--border)", borderRadius: "var(--radius-lg)", overflow: "hidden" }}>
+              <div onClick={() => setOpenPool(isOpen ? null : setName)} style={{ padding: "10px 14px", cursor: "pointer", display: "flex", justifyContent: "space-between", background: "var(--bg-surface)" }}>
+                <span style={{ fontFamily: "Barlow Condensed", fontWeight: 700, fontSize: 15 }}>{setName}</span>
+                <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{doneCount}/{ps.length} done {isOpen ? "▲" : "▼"}</span>
+              </div>
+              {isOpen && (
+                <div style={{ padding: "4px 14px 10px" }}>
+                  {ps.map((p, i) => {
+                    const done = p.idx < currentIdx;
+                    const current = p.idx === currentIdx;
+                    return (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "4px 0", borderBottom: "1px solid var(--border)", opacity: done ? 0.4 : 1 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          {current && <span style={{ fontSize: 10, padding: "1px 5px", borderRadius: 8, background: "var(--green-bg)", color: "var(--green)", border: "1px solid rgba(63,185,80,0.3)" }}>NOW</span>}
+                          {done && <span style={{ fontSize: 10, color: "var(--text-dim)" }}>✓</span>}
+                          <span style={{ fontSize: 13, textDecoration: done ? "line-through" : "none" }}>{p.name}</span>
+                          {p.os && <span className="badge badge-os" style={{ fontSize: 10 }}>OS</span>}
+                        </div>
+                        <span style={{ fontSize: 12, fontFamily: "Barlow Condensed", color: "var(--text-muted)" }}>{fmtMoney(p.base, league)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
   if (!isHundred) {
-    // For IPL/SA20: group by role
+    // SA20 etc: group by role
     const roles = ["WK-Batter", "Batter", "All-rounder", "Bowler"];
     const byRole = {};
     roles.forEach((r) => {
@@ -1002,10 +1052,90 @@ function SoldViewer({ log, league }) {
   );
 }
 
+
+// ── Mid-auction team picker (for late joiners / spectators) ───────────────────
+function TeamPickerPanel({ room, session, onJoin }) {
+  const takenBy = {};
+  room.teams.forEach((t) => { if (t.human) takenBy[t.name] = t.human; });
+  const myCurrentTeam = room.teams.find((t) => t.human === session.myName)?.name;
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>
+        {myCurrentTeam ? "Switch team" : "Join as a team"}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {room.teams.map((t) => {
+          const taken = takenBy[t.name] && takenBy[t.name] !== session.myName;
+          const isMine = takenBy[t.name] === session.myName;
+          return (
+            <button
+              key={t.name}
+              className={`btn${isMine ? " btn-primary" : " btn-ghost"}`}
+              style={{ justifyContent: "space-between", display: "flex", alignItems: "center", opacity: taken ? 0.45 : 1 }}
+              disabled={taken}
+              onClick={() => !taken && onJoin(t.name)}
+            >
+              <span>{t.name}</span>
+              <span style={{ fontSize: 12, color: isMine ? "inherit" : "var(--text-dim)" }}>
+                {isMine ? "✓ you" : taken ? takenBy[t.name] : "open"}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      {myCurrentTeam && (
+        <button
+          className="btn btn-ghost"
+          style={{ marginTop: 8, fontSize: 12, color: "var(--text-dim)" }}
+          onClick={() => onJoin(null)}
+        >
+          Leave team (spectate)
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── People panel — host sees all members, can kick ────────────────────────────
+function PeoplePanel({ room, session, onKick }) {
+  const members = [{ name: room.hostName, role: "Host", team: null }];
+  room.teams.forEach((t) => {
+    if (t.human) members.push({ name: t.human, role: "Player", team: t.name });
+  });
+  if (members.length <= 1) {
+    return <div style={{ fontSize: 13, color: "var(--text-dim)", padding: "8px 0" }}>No players have joined yet.</div>;
+  }
+  return (
+    <div>
+      {members.map((m, i) => (
+        <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid var(--border)" }}>
+          <div>
+            <span style={{ fontSize: 13, fontWeight: m.name === session.myName ? 600 : 400 }}>
+              {m.name}
+              {m.name === session.myName && <span style={{ fontSize: 11, color: "var(--text-dim)", marginLeft: 6 }}>you</span>}
+            </span>
+            {m.team && <div style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 1 }}>{m.team}</div>}
+          </div>
+          {session.isHost && m.name !== session.myName && (
+            <button
+              className="btn btn-ghost"
+              style={{ fontSize: 11, padding: "2px 10px", color: "#f85149", borderColor: "#f85149" }}
+              onClick={() => onKick(m.name)}
+            >
+              Kick
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AuctionScreen({ session, goTo }) {
   const [room, setRoomState] = useState(null);
   const [activeTab, setActiveTab] = useState("squads");
+  const [showTeamPicker, setShowTeamPicker] = useState(false);
   const processingRef = useRef(false);
   const roomRef = useRef(null);
   const isHundred = session.league === "hundred";
@@ -1018,8 +1148,9 @@ export default function AuctionScreen({ session, goTo }) {
       roomRef.current = r;
       setRoomState({ ...r });
       if (r.phase === "complete") goTo("results", { finalRoom: r });
+      if (!session.isHost && (r.kicked || []).includes(session.myName)) goTo("home");
     },
-    [goTo],
+    [goTo, session.isHost, session.myName],
   );
 
   useEffect(() => {
@@ -1186,6 +1317,30 @@ export default function AuctionScreen({ session, goTo }) {
     await setRoom(session.roomCode, r);
   }
 
+  async function kickPlayer(name) {
+    const r = await getRoom(session.roomCode);
+    if (!r) return;
+    r.teams.forEach((t) => { if (t.human === name) t.human = null; });
+    r.kicked = [...(r.kicked || []), name];
+    r.log.push({ type: "system", text: `${name} was removed from the room`, t: Date.now() });
+    await setRoom(session.roomCode, r);
+  }
+
+  async function joinTeam(teamName) {
+    const r = await getRoom(session.roomCode);
+    if (!r) return;
+    r.teams.forEach((t) => { if (t.human === session.myName) t.human = null; });
+    if (teamName) {
+      const team = r.teams.find((t) => t.name === teamName);
+      if (team && !team.human) {
+        team.human = session.myName;
+        r.log.push({ type: "system", text: `${session.myName} joined ${teamName}`, t: Date.now() });
+      }
+    }
+    await setRoom(session.roomCode, r);
+    setShowTeamPicker(false);
+  }
+
   async function placeBid() {
     const r = await getRoom(session.roomCode);
     if (!r || r.phase !== "bidding") return;
@@ -1253,7 +1408,9 @@ export default function AuctionScreen({ session, goTo }) {
 
   // Pool label for current player
   const currentPoolLabel =
-    isHundred && player?.poolLabel ? player.poolLabel : null;
+    isHundred && player?.poolLabel ? player.poolLabel
+    : session.league === "ipl" && player?.setLabel ? player.setLabel
+    : null;
 
   return (
     <div>
@@ -1307,7 +1464,7 @@ export default function AuctionScreen({ session, goTo }) {
               fontWeight: 600,
             }}
           >
-            {myTeamName}
+            {myTeamName || (session.isHost ? room.hostName : "Spectator")}
           </div>
           <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
             {myTeam ? fmtMoney(myTeam.budget, room.league) : "—"} remaining
@@ -1315,11 +1472,18 @@ export default function AuctionScreen({ session, goTo }) {
           <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
             Squad: {myTeam?.squad.length ?? 0} · OS: {myOs}/{l.overseasMax}
           </div>
+          <button
+            className="btn btn-ghost"
+            style={{ fontSize: 11, padding: "2px 10px", marginTop: 4 }}
+            onClick={() => setShowTeamPicker((v) => !v)}
+          >
+            {session.isHost ? "👥 People" : myTeamName ? "⇄ Switch team" : "＋ Join team"}
+          </button>
         </div>
       </div>
 
       {/* Pool progress (Hundred only) */}
-      {isHundred && <PoolProgress room={room} />}
+      {(isHundred || session.league === "ipl") && <PoolProgress room={room} />}
 
       {/* Sold transition panel - shown between sales */}
       {room.phase === "sold" && room.soldResult && (
@@ -1511,12 +1675,12 @@ export default function AuctionScreen({ session, goTo }) {
                       : `BID ${fmtMoney(nextBid, room.league)}`}
               </button>
 
-              {/* Fixed increment display for Hundred (tiered), dropdown for others */}
-              {isHundred ? (
+              {/* Fixed increment display for Hundred + IPL (tiered), dropdown for others */}
+              {isHundred || room.league === "ipl" ? (
                 <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
                   Increment:{" "}
                   <span style={{ color: "var(--text)", fontWeight: 500 }}>
-                    {hundredIncrementLabel(room.currentBid)}
+                    {isHundred ? hundredIncrementLabel(room.currentBid) : iplIncrementLabel(room.currentBid)}
                   </span>
                   <span
                     style={{
@@ -1572,6 +1736,14 @@ export default function AuctionScreen({ session, goTo }) {
         >
           Sold
         </button>
+        {session.isHost && (
+          <button
+            className={`tab-btn${activeTab === "people" ? " active" : ""}`}
+            onClick={() => setActiveTab("people")}
+          >
+            People
+          </button>
+        )}
       </div>
 
       {activeTab === "squads" && (
@@ -1601,6 +1773,10 @@ export default function AuctionScreen({ session, goTo }) {
 
       {activeTab === "sold" && (
         <SoldViewer log={room.log} league={room.league} />
+      )}
+
+      {activeTab === "people" && (
+        <PeoplePanel room={room} session={session} onKick={kickPlayer} />
       )}
     </div>
   );
