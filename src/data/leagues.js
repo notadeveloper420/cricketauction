@@ -871,7 +871,7 @@ export const LEAGUES = {
     ],
   },
 
-/*
+  /*
   sa20: {
     name: "SA20",
     shortName: "SA20",
@@ -1410,4 +1410,4 @@ export function calcHundredDeduction(playerCount) {
 }
 
 */
-
+};
